@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DB_NAME=encuestas_db
+      - DB_USER=encuestas_user
+      - DB_PASS=encuestas_pass
+    command: python manage.py runserver 0.0.0.0:8000
+
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    command: npm run dev -- --host
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: encuestas_db
+      POSTGRES_USER: encuestas_user
+      POSTGRES_PASSWORD: encuestas_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
